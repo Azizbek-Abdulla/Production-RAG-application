@@ -53,7 +53,7 @@ def _to_qdrant_sparse(sparse_weights: dict) -> qmodels.SparseVector:
     """
 
     indices = [int(token_id) for token_id in sparse_weights.keys()]
-    values = [int(weight) for weight in sparse_weights.values()]
+    values = [float(weight) for weight in sparse_weights.values()]
     return qmodels.SparseVector(indices=indices, values=values)
 
 def hybrid_search(
@@ -92,7 +92,7 @@ def hybrid_search(
     payloads: dict[str, dict] = {}
 
     for hit in dense_hits:
-        combined_scores[hit.id] = combined_scores.get(hit.id, 0.0) + (1-alpha) * hit.score
+        combined_scores[hit.id] = combined_scores.get(hit.id, 0.0) + alpha * hit.score
         payloads[hit.id] = hit.payload
     for hit in sparse_hits:
         combined_scores[hit.id] = combined_scores.get(hit.id, 0.0) + (1-alpha) * hit.score
@@ -105,7 +105,7 @@ def hybrid_search(
             "text": payloads[point_id]["text"],
             "source": payloads[point_id]["source"],
             "page": payloads[point_id]["page"],
-            "score": payloads[point_id]
+            "score": combined_scores[point_id]
         }
         for point_id in ranked_ids
     ]
