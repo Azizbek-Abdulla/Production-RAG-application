@@ -16,7 +16,7 @@ sys.path.append(str(PROJECT_ROOT))
 import uuid
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
-from app.settings_config import settings
+from app.config import settings
 from utils.log import get_logger
 from loguru import logger
 
@@ -54,10 +54,11 @@ def ensure_collection(client: QdrantClient) -> None:
 
     client.create_collection(
         collection_name=collection_name, 
-        vectors_config=qmodels.VectorParams(
+        vectors_config={"dense": qmodels.VectorParams(
             size=settings.embedding_dim,
             distance=qmodels.Distance.COSINE
-        )
+        )}, 
+        sparse_vectors_config=qmodels.SparseVectorParams()
     )
 
 def upsert_chunks(
@@ -118,7 +119,7 @@ def search(
     results = client.search(
         collection_name=settings.qdrant_collection,
         query_vector=query_vector, 
-        top_k=top_k
+        limit=top_k
     )
 
     matches = [
@@ -126,7 +127,7 @@ def search(
             "text": r.payload["text"],
             "source": r.payload["source"],
             "page": r.payload["page"],
-            "score": r.payload["score"]
+            "score": r.score
         }
         for r in results
     ]
