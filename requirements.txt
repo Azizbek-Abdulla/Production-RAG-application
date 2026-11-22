@@ -38,3 +38,6 @@ tenacity                    # retry logic for API/network calls
 # --- Testing ---
 pytest
 pytest-asyncio
+
+# --- Code quality ---
+ruff
