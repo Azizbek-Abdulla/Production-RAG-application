@@ -43,8 +43,7 @@ def get_text_splitter(
     return RecursiveCharacterTextSplitter(
         separators=["\n\n", "\n", ". ", ", ", " ", ""],
         chunk_size = chuck_size, 
-        chunk_overlap = chunk_overlap,
-        length_function = len
+        chunk_overlap = chunk_overlap
     )
 
 def split_into_chunks(text: str, 
