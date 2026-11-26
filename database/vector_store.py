@@ -18,7 +18,8 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as qmodels
 from app.config import settings
 from utils.log import get_logger
-from loguru import logger
+
+logger = get_logger(__name__)
 
 def get_qdrant_client() -> QdrantClient:
     """
