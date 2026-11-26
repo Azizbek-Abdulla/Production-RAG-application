@@ -12,9 +12,13 @@ Usage:
 from FlagEmbedding import FlagReranker
 from functools import lru_cache
 from app.config import settings
+from utils.log import get_logger
+
+logger = get_logger(__name__)
 
 @lru_cache(maxsize=1)
 def get_reranker() -> FlagReranker:
+    logger.info("Reranker model is set")
     return FlagReranker(model_name_or_path=settings.reranker_model)
 
 def rerank(model: FlagReranker, 
@@ -22,6 +26,7 @@ def rerank(model: FlagReranker,
            chunks: list[dict], 
            top_k: int = 7) -> list[dict]:
     if not chunks:
+        logger.warning("rerank function is called with empty list of chunks")
         return []
     pairs = [[query, chunk["text"]] for chunk in chunks]
     scores = model.compute_score(sentence_pairs=pairs, normalize=True)
@@ -33,5 +38,6 @@ def rerank(model: FlagReranker,
                     key=lambda x: x[0], 
                     reverse=True)[:top_k]
 
+    logger.info("reranking is complete")
     return [{**chunk, "rerank_score": round(float(score), 4)} for score, chunk in 
             scored]
