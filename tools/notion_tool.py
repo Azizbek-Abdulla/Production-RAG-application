@@ -48,8 +48,8 @@ def save_to_notion(title: str, content: str) -> str:
             )
         page_url = response.get("url", "")
 
-        return f"Ma'lumot Notionga muvaffaqqiyatli saqlandi: {page_url}"
+        return f"Successfully saved to Notion: {page_url}"
     
     except Exception as exc:
-        return f"Xatolik sodir bo'ldi {exc}"
+        return f"Error saving to Notion: {exc}"
     
