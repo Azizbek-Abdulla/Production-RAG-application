@@ -5,7 +5,7 @@ from app.config import settings
 def get_notion_client(notion_api: str | None = None) -> Client:
     api_key = notion_api or settings.notion_api_key
     if not api_key:
-        raise ValueError("Notion API kaliti sozlanmagan")
+        raise ValueError("Notion API is not set")
     return Client(auth=api_key)
 
 def _split_content(content: str) -> list[str]:
@@ -21,7 +21,7 @@ def save_to_notion(title: str, content: str) -> str:
         content: The full text content or summary to save.
     """
     if not settings.notion_api_key or not settings.notion_page_id:
-        return "Notion API kaliti yoki sahifa Id sozlanmagan"
+        return "either Notion API  or page id is not set"
     try: 
         notion = get_notion_client(settings.notion_api_key)
         chunks = _split_content(content)
